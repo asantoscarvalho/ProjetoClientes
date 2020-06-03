@@ -15,7 +15,7 @@ namespace ProjetoClientes.Api.Controllers
     [ApiController]
     public class ClienteController : ControllerBase
     {
-        private IClienteRepository _repo;
+        private readonly IClienteRepository _repo;
 
         private readonly IMapper _mapper;
 
