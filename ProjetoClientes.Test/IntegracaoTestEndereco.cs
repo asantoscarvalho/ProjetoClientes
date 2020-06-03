@@ -1,0 +1,275 @@
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Newtonsoft.Json;
+using ProjetoClientes.Api;
+using ProjetoClientes.Domain.Dto;
+using ProjetoClientes.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
+using Xunit;
+
+namespace ProjetoClientes.Test
+{
+    
+    public class IntegracaoTestEndereco : IClassFixture<WebApplicationFactory<Startup>>
+    {
+        private readonly HttpClient httpClient;
+
+        public int EnderecoID { get; set; } = 10;
+
+        public IntegracaoTestEndereco(WebApplicationFactory<Startup> factory)
+        {
+            httpClient = factory.CreateClient();
+        }
+
+
+        [Fact]
+        [Trait("Post", "Endereco")]
+    
+        public async Task Post()
+        {
+            EnderecoDto _EnderecoDto = new EnderecoDto() { 
+                Logradouro = "Rua João da Silva",
+                Bairro = "Bairro ",
+                Cidade = "Rio de Janeiro",
+                Estado = "Rio de Janeiro",
+                ClienteId = 1
+            };
+
+            string strEnderecoDto = JsonConvert.SerializeObject(_EnderecoDto);
+
+            HttpContent contet = new StringContent(strEnderecoDto, Encoding.UTF8, "application/json");
+            // Act
+            var response = await httpClient.PostAsync("api/endereco/", contet);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            var stringResponse = await response.Content.ReadAsStringAsync();
+            var Endereco = System.Text.Json.JsonSerializer.Deserialize<Endereco>(stringResponse, new  JsonSerializerOptions{ PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+            EnderecoID = Endereco.Id;
+            Assert.Equal(_EnderecoDto.Logradouro, Endereco.Logradouro);
+
+        }
+
+
+        
+        [Fact]
+        [Trait("Put", "Endereco")]
+        public async Task Put()
+        {
+            EnderecoDto _EnderecoDto = new EnderecoDto()
+            {
+                Id = EnderecoID,
+                Logradouro = "Rua João",
+                Bairro = "Bairro ",
+                Cidade = "Rio de Janeiro",
+                Estado = "Rio de Janeiro",
+                ClienteId = 1
+            };
+
+            string strEnderecoDto = JsonConvert.SerializeObject(_EnderecoDto);
+
+            HttpContent contet = new StringContent(strEnderecoDto, Encoding.UTF8, "application/json");
+            // Act
+            var response = await httpClient.PutAsync($"api/endereco/{EnderecoID}", contet);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            var stringResponse = await response.Content.ReadAsStringAsync();
+            var Endereco = System.Text.Json.JsonSerializer.Deserialize<Endereco>(stringResponse, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+            EnderecoID = Endereco.Id;
+            Assert.Equal(_EnderecoDto.Logradouro, Endereco.Logradouro);
+
+        }
+
+        [Fact]
+        [Trait("GetById", "Endereco")]
+        public async Task GetById()
+        {
+            
+               // Act
+               var response = await httpClient.GetAsync($"api/endereco/{EnderecoID}");
+            var resultado = 0;
+            // Assert
+            response.EnsureSuccessStatusCode();
+            var stringResponse = await response.Content.ReadAsStringAsync();
+            if (!string.IsNullOrEmpty(stringResponse))
+            {
+                var Endereco = System.Text.Json.JsonSerializer.Deserialize<Endereco>(stringResponse, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase });
+                resultado = Endereco.Id;
+            }
+            Assert.Equal(EnderecoID, resultado);
+
+        }
+
+        [Fact]
+        [Trait("Delete", "Endereco")]
+        public async Task Delete()
+        {
+            EnderecoID = 4;
+            var response = await httpClient.DeleteAsync($"api/endereco/{EnderecoID}");
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(StatusCodes.Status200OK , (int)response.StatusCode);
+
+        }
+
+
+        [Fact]
+        [Trait("Logradouro Invalido", "Endereco")]
+        public async Task Nao_Cadastrar_sem_logradouro()
+        {
+            EnderecoDto _EnderecoDto = new EnderecoDto()
+            {
+                Logradouro = "",
+                Bairro = "Bairro ",
+                Cidade = "Rio de Janeiro",
+                Estado = "Rio de Janeiro",
+                ClienteId = 1
+            };
+
+            string strEnderecoDto = JsonConvert.SerializeObject(_EnderecoDto);
+
+            HttpContent contet = new StringContent(strEnderecoDto, Encoding.UTF8, "application/json");
+            
+            var response = await httpClient.PostAsync("api/endereco/", contet);
+
+
+            
+            var stringResponse = await response.Content.ReadAsStringAsync();
+
+            Assert.Equal(StatusCodes.Status400BadRequest, (int)response.StatusCode);
+
+        }
+
+        [Fact]
+        [Trait("Bairro Invalido", "Endereco")]
+        public async Task Nao_Cadastrar_sem_bairro_preenchido()
+        {
+            EnderecoDto _EnderecoDto = new EnderecoDto()
+            {
+                Logradouro = "Rua João",
+                Bairro = "",
+                Cidade = "Rio de Janeiro",
+                Estado = "Rio de Janeiro",
+                ClienteId = 1
+            };
+
+            string strEnderecoDto = JsonConvert.SerializeObject(_EnderecoDto);
+
+            HttpContent contet = new StringContent(strEnderecoDto, Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PostAsync("api/Endereco/", contet);
+
+
+
+            var stringResponse = await response.Content.ReadAsStringAsync();
+
+            Assert.Equal(StatusCodes.Status400BadRequest, (int)response.StatusCode);
+
+
+        }
+
+        [Fact]
+        [Trait("Cidade Invalido", "Endereco")]
+        public async Task Nao_Cadastrar_sem_Cidade()
+        {
+            EnderecoDto _EnderecoDto = new EnderecoDto()
+            {
+                Logradouro = "Rua João",
+                Bairro = "Bairro",
+                Cidade = "",
+                Estado = "Rio de Janeiro",
+                ClienteId = 1
+            };
+
+            string strEnderecoDto = JsonConvert.SerializeObject(_EnderecoDto);
+
+            HttpContent contet = new StringContent(strEnderecoDto, Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PostAsync("api/Endereco/", contet);
+
+
+
+            var stringResponse = await response.Content.ReadAsStringAsync();
+
+            Assert.Equal(StatusCodes.Status400BadRequest, (int)response.StatusCode);
+
+
+        }
+
+        [Fact]
+        [Trait("Estado Invalido", "Endereco")]
+        public async Task Nao_Cadastrar_sem_Estado()
+        {
+            EnderecoDto _EnderecoDto = new EnderecoDto()
+            {
+                Logradouro = "Rua João",
+                Bairro = "Bairro",
+                Cidade = "Rio de Janeiro",
+                Estado = "",
+                ClienteId = 1
+            };
+
+            string strEnderecoDto = JsonConvert.SerializeObject(_EnderecoDto);
+
+            HttpContent contet = new StringContent(strEnderecoDto, Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PostAsync("api/Endereco/", contet);
+
+            var stringResponse = await response.Content.ReadAsStringAsync();
+
+            Assert.Equal(StatusCodes.Status400BadRequest, (int)response.StatusCode);
+
+
+        }
+
+        [Fact]
+        [Trait("Cliente Invalido", "Endereco")]
+        public async Task Nao_Cadastrar_sem_Cliente()
+        {
+            EnderecoDto _EnderecoDto = new EnderecoDto()
+            {
+                Logradouro = "Rua João",
+                Bairro = "Bairro",
+                Cidade = "",
+                Estado = "Rio de Janeiro",
+                ClienteId = 0
+            };
+
+            string strEnderecoDto = JsonConvert.SerializeObject(_EnderecoDto);
+
+            HttpContent contet = new StringContent(strEnderecoDto, Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PostAsync("api/Endereco/", contet);
+
+            var stringResponse = await response.Content.ReadAsStringAsync();
+
+            Assert.Equal(StatusCodes.Status400BadRequest, (int)response.StatusCode);
+
+
+        }
+
+
+        [Fact]
+        [Trait("GetAll","Endereco")]
+        public async Task GetAll()
+        {
+            var response = await httpClient.GetAsync("api/Endereco");
+
+            response.EnsureSuccessStatusCode();
+            var stringResponse = await response.Content.ReadAsStringAsync();
+            var Endereco = System.Text.Json.JsonSerializer.Deserialize<List<Endereco>>(stringResponse, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase });
+
+            Assert.NotEmpty(Endereco);
+
+        }
+
+
+
+    }
+}

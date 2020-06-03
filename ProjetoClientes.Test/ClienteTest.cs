@@ -20,18 +20,22 @@ namespace ProjetoClientes.Test
     public class ClienteTest 
     {
 
-        [Fact]
-        public void ValidaCPF()
+        [Theory]
+        [InlineData("04258358711", true)]
+        [InlineData("00000000000", false)]
+        [InlineData("24563481222", false)]
+        [InlineData("32156456564", false)]
+        public void ValidaCPF(string cpf, bool valido)
         {
             //Arrange
             
-            const string cpf= "00000000000";
+            
 
             //Act
             bool isValid = Util.ValidaCPF(cpf);
 
             //Assert
-            Assert.True(isValid, $"O CPF {cpf} não é valido");
+            Assert.Equal(valido,isValid);
         }
 
 

@@ -1,0 +1,8 @@
+<Playlist Version="1.0">
+  <Add Test="ProjetoClientes.Test.IntegracaoTestCliente.GetAll" />
+  <Add Test="ProjetoClientes.Test.IntegracaoTestCliente.Post" />
+  <Add Test="ProjetoClientes.Test.IntegracaoTestCliente.GetById" />
+  <Add Test="ProjetoClientes.Test.IntegracaoTestCliente.Put" />
+  <Add Test="ProjetoClientes.Test.IntegracaoTestCliente.Delete" />
+  <Add Test="ProjetoClientes.Test.IntegracaoTestCliente._Cadastrar_sem_nome_preenchido" />
+</Playlist>
