@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ProjetoClientes.Api</name>
+    </assembly>
+    <members>
+        <member name="M:ProjetoClientes.Api.Controllers.ClienteController.Get">
+            <summary>
+            Lista todos os Clientes cadastrados.
+            </summary>
+        </member>
+        <member name="M:ProjetoClientes.Api.Controllers.ClienteController.Get(System.Int32)">
+            <summary>
+            Retorna o cliente cadastrado de acordo com o codigo informado.
+            </summary>
+            <param name="ClienteId"></param>  
+        </member>
+        <member name="M:ProjetoClientes.Api.Controllers.ClienteController.Post(ProjetoClientes.Domain.Dto.ClienteDto)">
+            <summary>
+            Grava os dados do cliente.
+            </summary>
+        </member>
+        <member name="M:ProjetoClientes.Api.Controllers.ClienteController.Put(System.Int32,ProjetoClientes.Domain.Dto.ClienteDto)">
+            <summary>
+            Alterar dados do cliente.
+            </summary>
+            <param name="ClienteId"></param>  
+            <param name="model"></param>  
+        </member>
+        <member name="M:ProjetoClientes.Api.Controllers.ClienteController.Delete(System.Int32)">
+            <summary>
+            Excluir o cliente de acordo com o código informado.
+            </summary>
+            <param name="ClienteId"></param>  
+        </member>
+        <member name="M:ProjetoClientes.Api.Controllers.EnderecoController.Get">
+            <summary>
+            Lista todos os endereços cadastrados.
+            </summary>
+        </member>
+        <member name="M:ProjetoClientes.Api.Controllers.EnderecoController.Get(System.Int32)">
+            <summary>
+            Retorna o endereço cadastrado de acordo com o codigo informado.
+            </summary>
+            <param name="EnderecoId"></param>  
+        </member>
+        <member name="M:ProjetoClientes.Api.Controllers.EnderecoController.Post(ProjetoClientes.Domain.Dto.EnderecoDto)">
+            <summary>
+            Grava os dados do endereço.
+            </summary>
+        </member>
+        <member name="M:ProjetoClientes.Api.Controllers.EnderecoController.Put(System.Int32,ProjetoClientes.Domain.Dto.EnderecoDto)">
+            <summary>
+            Alterar dados do Endereço.
+            </summary>
+            <param name="EnderecoId"></param>  
+            <param name="model"></param>  
+        </member>
+        <member name="M:ProjetoClientes.Api.Controllers.EnderecoController.Delete(System.Int32)">
+            <summary>
+            Excluir o endereço do código informado.
+            </summary>
+            <param name="EnderecoId"></param>  
+        </member>
+    </members>
+</doc>
