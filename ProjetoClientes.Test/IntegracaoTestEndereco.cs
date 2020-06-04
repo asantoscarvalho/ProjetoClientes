@@ -6,6 +6,7 @@ using ProjetoClientes.Domain.Dto;
 using ProjetoClientes.Domain.Entities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -20,7 +21,7 @@ namespace ProjetoClientes.Test
     {
         private readonly HttpClient httpClient;
 
-        public int EnderecoID { get; set; } = 10;
+        
 
         public IntegracaoTestEndereco(WebApplicationFactory<Startup> factory)
         {
@@ -33,86 +34,57 @@ namespace ProjetoClientes.Test
     
         public async Task Post()
         {
+
+            var responseGet = await httpClient.GetAsync("api/cliente");
+
+
+            responseGet.EnsureSuccessStatusCode();
+            var clientstringResponse = await responseGet.Content.ReadAsStringAsync();
+            var cliente = System.Text.Json.JsonSerializer.Deserialize<List<Cliente>>(clientstringResponse, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase });
+
+            var ClientId = cliente.LastOrDefault().Id;
+
             EnderecoDto _EnderecoDto = new EnderecoDto() { 
                 Logradouro = "Rua João da Silva",
                 Bairro = "Bairro ",
                 Cidade = "Rio de Janeiro",
                 Estado = "Rio de Janeiro",
-                ClienteId = 1
+                ClienteId = ClientId
             };
 
             string strEnderecoDto = JsonConvert.SerializeObject(_EnderecoDto);
 
             HttpContent contet = new StringContent(strEnderecoDto, Encoding.UTF8, "application/json");
-            // Act
             var response = await httpClient.PostAsync("api/endereco/", contet);
 
-            // Assert
             response.EnsureSuccessStatusCode();
             var stringResponse = await response.Content.ReadAsStringAsync();
             var Endereco = System.Text.Json.JsonSerializer.Deserialize<Endereco>(stringResponse, new  JsonSerializerOptions{ PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-            EnderecoID = Endereco.Id;
+            
             Assert.Equal(_EnderecoDto.Logradouro, Endereco.Logradouro);
 
         }
 
 
         
-        [Fact]
-        [Trait("Put", "Endereco")]
-        public async Task Put()
-        {
-            EnderecoDto _EnderecoDto = new EnderecoDto()
-            {
-                Id = EnderecoID,
-                Logradouro = "Rua João",
-                Bairro = "Bairro ",
-                Cidade = "Rio de Janeiro",
-                Estado = "Rio de Janeiro",
-                ClienteId = 1
-            };
-
-            string strEnderecoDto = JsonConvert.SerializeObject(_EnderecoDto);
-
-            HttpContent contet = new StringContent(strEnderecoDto, Encoding.UTF8, "application/json");
-            // Act
-            var response = await httpClient.PutAsync($"api/endereco/{EnderecoID}", contet);
-
-            // Assert
-            response.EnsureSuccessStatusCode();
-            var stringResponse = await response.Content.ReadAsStringAsync();
-            var Endereco = System.Text.Json.JsonSerializer.Deserialize<Endereco>(stringResponse, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-            EnderecoID = Endereco.Id;
-            Assert.Equal(_EnderecoDto.Logradouro, Endereco.Logradouro);
-
-        }
-
-        [Fact]
-        [Trait("GetById", "Endereco")]
-        public async Task GetById()
-        {
-            
-               // Act
-               var response = await httpClient.GetAsync($"api/endereco/{EnderecoID}");
-            var resultado = 0;
-            // Assert
-            response.EnsureSuccessStatusCode();
-            var stringResponse = await response.Content.ReadAsStringAsync();
-            if (!string.IsNullOrEmpty(stringResponse))
-            {
-                var Endereco = System.Text.Json.JsonSerializer.Deserialize<Endereco>(stringResponse, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase });
-                resultado = Endereco.Id;
-            }
-            Assert.Equal(EnderecoID, resultado);
-
-        }
-
+       
+        
         [Fact]
         [Trait("Delete", "Endereco")]
         public async Task Delete()
         {
-            EnderecoID = 4;
-            var response = await httpClient.DeleteAsync($"api/endereco/{EnderecoID}");
+
+            var responseGet = await httpClient.GetAsync("api/endereco");
+
+
+            responseGet.EnsureSuccessStatusCode();
+            var stringResponse = await responseGet.Content.ReadAsStringAsync();
+
+            Assert.NotEmpty(stringResponse);
+            var cliente = System.Text.Json.JsonSerializer.Deserialize<List<Endereco>>(stringResponse, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase });
+
+            var Id = cliente.LastOrDefault().Id;
+            var response = await httpClient.DeleteAsync($"api/endereco/{Id}");
             response.EnsureSuccessStatusCode();
             Assert.Equal(StatusCodes.Status200OK , (int)response.StatusCode);
 
@@ -139,9 +111,6 @@ namespace ProjetoClientes.Test
             var response = await httpClient.PostAsync("api/endereco/", contet);
 
 
-            
-            var stringResponse = await response.Content.ReadAsStringAsync();
-
             Assert.Equal(StatusCodes.Status400BadRequest, (int)response.StatusCode);
 
         }
@@ -164,10 +133,6 @@ namespace ProjetoClientes.Test
             HttpContent contet = new StringContent(strEnderecoDto, Encoding.UTF8, "application/json");
 
             var response = await httpClient.PostAsync("api/Endereco/", contet);
-
-
-
-            var stringResponse = await response.Content.ReadAsStringAsync();
 
             Assert.Equal(StatusCodes.Status400BadRequest, (int)response.StatusCode);
 
@@ -193,12 +158,7 @@ namespace ProjetoClientes.Test
 
             var response = await httpClient.PostAsync("api/Endereco/", contet);
 
-
-
-            var stringResponse = await response.Content.ReadAsStringAsync();
-
             Assert.Equal(StatusCodes.Status400BadRequest, (int)response.StatusCode);
-
 
         }
 
@@ -221,11 +181,7 @@ namespace ProjetoClientes.Test
 
             var response = await httpClient.PostAsync("api/Endereco/", contet);
 
-            var stringResponse = await response.Content.ReadAsStringAsync();
-
             Assert.Equal(StatusCodes.Status400BadRequest, (int)response.StatusCode);
-
-
         }
 
         [Fact]
@@ -247,10 +203,7 @@ namespace ProjetoClientes.Test
 
             var response = await httpClient.PostAsync("api/Endereco/", contet);
 
-            var stringResponse = await response.Content.ReadAsStringAsync();
-
             Assert.Equal(StatusCodes.Status400BadRequest, (int)response.StatusCode);
-
 
         }
 

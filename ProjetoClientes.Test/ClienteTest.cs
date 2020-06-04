@@ -13,12 +13,20 @@ using ProjetoClientes.Infra.Context;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using ProjetoClientes.Domain.Helper;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Newtonsoft.Json;
+using System.Text;
+using ProjetoClientes.Domain.Entities;
+using System.Text.Json;
+using System.Threading;
 
 namespace ProjetoClientes.Test
 {
  
-    public class ClienteTest 
-    {
+    public class ClienteTest
+    { 
+
+
 
         [Theory]
         [InlineData("04258358711", true)]

@@ -108,9 +108,9 @@ namespace ProjetoClientes.Api.Controllers
                 var cliente = await _repo.GetById(ClienteId);
                 if (cliente == null) return NotFound();
 
-                
-                
-                if (cliente.enderecos != null)
+
+
+                if (cliente.enderecos != null && cliente.enderecos.Count > 0 )
                 {
                     var idEnderecos = new List<int>();
 
